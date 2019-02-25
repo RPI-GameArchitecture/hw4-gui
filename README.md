@@ -1,35 +1,67 @@
-# ga2018-homework3
-Third homework for RPI Game Architecture.
+# ga2018-homework4: GUI
+Fourth homework for Game Architecture.
 
-In this assignment you will draw a simple textured cube. The raw data
-for the vertex positions in model space, the texture coordinates, and 
-the indices are provided. You must implement all the steps required 
-to get that raw data from your program through the graphics pipeline 
-and on to the screen. This will involve:
+In this assignment you will implement three simple GUI widgets: label, button,
+and checkbox to create a simple model viewer program..
 
-	1. Create the vertex data and its specification for use by shader 
-	programs (See: ga_cube_component::create_vertex_array and ga_cube_component::destroy_vertex_array)
-	2. Write the vertex and fragment shaders (See: data\shaders\ga_unlit_texture_frag.glsl 
-	and data\shaders\ga_unlit_texture_vert.glsl)
-	3. Set any uniform variables needed by your shaders (See: the two 
-	overloads for ga_uniform::set in src\engine\graphics\ga_program.cpp)
-	4. Submit the vertex data for rendering (See: ga_output::draw in
-	src\engine\framework\ga_output.cpp).
+This has several parts: 
+1.  implement the GUI widgets.
+2.  load  models using the Asset Importer library 
+3. set up the GUI functions to show different models, and to turn on and off lighting
 
-You can also search for "// TODO: Homework 3" to find locations that
-are expected to be modified.
+Some supporting code is already written:
 
-When you're done you should have something that looks like the image
-in golden.png located in the root directory of the repository.
+	1. Code in ga_input grabs mouse position and button information and stores
+	it in ga_frame_params.
+	2. Code in ga_font does text rasterization from TrueType using stb_truetype.
+	3. Code in ga_material implements untextured, vertex colored geo, as well as material with basic lighting
+	4. Code in ga_output draws so called 'dynamic' geometry with screen space
+	orthographic projection.
 
-Note: By default ga_unlit_texture_material attempts to set the 
-model-view-projection matrix to a uniform variable called u_mvp and 
-the texture to another uniform called u_texture (See: ga_unlit_texture_material::bind 
-in src\engine\graphics\ga_material.cpp). You're free to change this,
-though it shouldn't be necessary.
+Your job is to implement all the "// TODO: Homework 4" elements in the gui directory,
+in  model_component.cpp and in main.cpp.
 
-For an extra 10-20% extra credit you can do something "interesting" in
-your shaders. A very simple example worth 10% would be to animate the
-color or texture coordinates using trig functions. You may also need
-to add some other uniforms to help drive that animation. Your idea must 
-be  well documented in comments to receive credit.
+
+
+Some snippets of code that you might find useful follow. Code to emit a text
+drawcall:
+
+	extern ga_font* g_font;
+	g_font->print(params, text_to_draw, position_x, position_y, color, &min, &max);
+
+Code to emit an outline box draw:
+
+	ga_dynamic_drawcall drawcall;
+
+	drawcall._positions.push_back({ upper_left_x, upper_left_y, 0.0f });
+	drawcall._positions.push_back({ lower_right_x, upper_left_y, 0.0f });
+	drawcall._positions.push_back({ lower_right_x, lower_right_y, 0.0f });
+	drawcall._positions.push_back({ upper_left_x, lower_right_y, 0.0f });
+	
+	drawcall._indices.push_back(0);
+	drawcall._indices.push_back(1);
+	drawcall._indices.push_back(1);
+	drawcall._indices.push_back(2);
+	drawcall._indices.push_back(2);
+	drawcall._indices.push_back(3);
+	drawcall._indices.push_back(3);
+	drawcall._indices.push_back(0);
+	
+	drawcall._color = color;
+	drawcall._draw_mode = GL_LINES;
+	drawcall._transform.make_identity();
+	drawcall._material = nullptr;
+	
+	while (params->_gui_drawcall_lock.test_and_set(std::memory_order_acquire)) {}
+	params->_gui_drawcalls.push_back(drawcall);
+	params->_gui_drawcall_lock.clear(std::memory_order_release);
+
+Code to detect a mouse click in a region:
+
+	ga_frame_params* params;
+	bool click_in_region =
+		params->_mouse_click_mask != 0 &&
+		params->_mouse_x >= upper_left_x &&
+		params->_mouse_y >= upper_left_y &&
+		params->_mouse_x <= lower_right_x &&
+		params->_mouse_y <= lower_right_y;
