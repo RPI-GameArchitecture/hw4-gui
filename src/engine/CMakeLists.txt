@@ -13,8 +13,6 @@ set(SDL_TIMER_ENABLED_BY_DEFAULT OFF)
 set(SDL_SHARED_ENABLED_BY_DEFAULT OFF)
 set(SDL_STATIC_ENABLED_BY_DEFAULT OFF)
 
-#add_subdirectory (${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/SDL2-2.0.7 ${PROJECT_BINARY_DIR}/SDL2-2.0.7)
-#include_directories ("${PROJECT_BINARY_DIR}/SDL2-2.0.9/include")
 include_directories ("${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/SDL2-2.0.9/include")
 link_directories ("${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/SDL2-2.0.9/lib/x64")
 
@@ -28,6 +26,12 @@ find_package(GLEW REQUIRED)
 include_directories (${GLEW_INCLUDE_DIRS})
 link_directories ("${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/glew-2.1.0/lib/Release/x64")
 
+# AssImp Open Asset Importer library
+include_directories ("${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/assimp/include")
+link_directories ("${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/assimp/lib")
+
+
+
 # GA framework and homeworks:
 include_directories ("${CMAKE_CURRENT_SOURCE_DIR}")
 file(GLOB_RECURSE GA_SOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
@@ -38,7 +42,8 @@ if (MSVC)
 endif()
 
 add_executable(ga ${GA_SOURCE_FILES} always_copy_data.h)
-target_link_libraries(ga SDL2 SDL2main SDL2test glew32s opengl32)
+target_link_libraries(ga SDL2 SDL2main SDL2test glew32s opengl32 assimp-vc140-mt.lib IrrXML.lib zlibstaticd.lib)
+
 if (MSVC)
 	set_target_properties(ga PROPERTIES LINK_FLAGS "/ignore:4098 /ignore:4099")
 endif()
@@ -49,3 +54,5 @@ add_dependencies(ga ALWAYS_COPY_DATA)
 add_custom_command(TARGET ga POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/../../data $<TARGET_FILE_DIR:ga>/data)
 
 add_custom_command(TARGET ga POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/SDL2-2.0.9/lib/x64/SDL2.dll $<TARGET_FILE_DIR:ga>)
+
+add_custom_command(TARGET ga POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/assimp/lib/assimp-vc140-mt.dll $<TARGET_FILE_DIR:ga>)

@@ -88,7 +88,7 @@ int main(int argc, const char** argv)
 	sim->add_entity(&model2);
 
 	// Create the default font:
-	g_font = new ga_font("VeraMono.ttf", 24.0f, 512, 512);
+	g_font = new ga_font("data/fonts/ttf-bitstream-vera-1.10/VeraMono.ttf", 24.0f, 512, 512);
 
 	// Main loop:
 	while (true)
