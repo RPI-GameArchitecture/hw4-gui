@@ -1,15 +1,22 @@
-# ga2018-homework4: GUI
+# ga2018-homework4: GUI and model loading
 Fourth homework for Game Architecture.
 
+Due: Sunday, March 10, 11:59pm
+
 In this assignment you will implement three simple GUI widgets: label, button,
-and checkbox to create a simple model viewer program..
+and checkbox to create a simple model viewer program.
 
 This has several parts: 
 1.  implement the GUI widgets.
 2.  load  models using the Asset Importer library 
 3. set up the GUI functions to show different models, and to turn on and off lighting
 
-Some supporting code is already written:
+For 10% Extra Credit: implement the Arcball method for rotating a model, as described by Ken Shoemake in the attached PDF.  
+This will require use of a quaternion class, which is added to the math/ directory.  The matrix class additionally has a helper function 
+added to construct a rotation transform matrix from a quaternion.  
+
+
+Some supporting code for the GUI is already written:
 
 	1. Code in ga_input grabs mouse position and button information and stores
 	it in ga_frame_params.
@@ -20,8 +27,6 @@ Some supporting code is already written:
 
 Your job is to implement all the "// TODO: Homework 4" elements in the gui directory,
 in  model_component.cpp and in main.cpp.
-
-
 
 Some snippets of code that you might find useful follow. Code to emit a text
 drawcall:
