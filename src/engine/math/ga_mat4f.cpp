@@ -86,6 +86,22 @@ void ga_mat4f::make_rotation_z(float angle)
 
 }
 
+void ga_mat4f::make_rotation(const ga_quatf& __restrict q)
+{
+	make_identity();
+
+	data[0][0] = 1.0f - 2.0f * (q.y * q.y + q.z * q.z);
+	data[1][0] = 2.0f * (q.x * q.y - q.z * q.w);
+	data[2][0] = 2.0f * (q.x * q.z + q.y * q.w);
+	data[0][1] = 2.0f * (q.x * q.y + q.z * q.w);
+	data[1][1] = 1.0f - 2.0f * (q.x * q.x + q.z * q.z);
+	data[2][1] = 2.0f * (q.y * q.z - q.x * q.w);
+	data[0][2] = 2.0f * (q.x * q.z - q.y * q.w);
+	data[1][2] = 2.0f * (q.y * q.z + q.x * q.w);
+	data[2][2] = 1.0f - 2.0f * (q.x * q.x + q.y * q.y);
+	data[3][3] = 1.0f;
+}
+
 void ga_mat4f::rotate_x(float angle)
 {
 	ga_mat4f tmp;
@@ -104,6 +120,13 @@ void ga_mat4f::rotate_z(float angle)
 {
 	ga_mat4f tmp;
 	tmp.make_rotation_z(angle);
+	(*this) *= tmp;
+}
+
+void ga_mat4f::rotate(const ga_quatf& __restrict q)
+{
+	ga_mat4f tmp;
+	tmp.make_rotation(q);
 	(*this) *= tmp;
 }
 

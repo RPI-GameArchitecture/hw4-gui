@@ -11,6 +11,7 @@
 
 #include "math/ga_vec3f.h"
 #include "math/ga_vec4f.h"
+#include "math/ga_quatf.h"
 
 /*
 ** Floating point 4x4 matrix.
@@ -49,7 +50,10 @@ struct ga_mat4f
 	*/
 	void make_rotation_z(float angle);
 
-
+	/*
+	** Build a rotation matrix using a quaternion
+	*/
+	void make_rotation(const ga_quatf& __restrict q);
 
 	/*
 	** Apply translation to the given matrix.
@@ -76,6 +80,10 @@ struct ga_mat4f
 	*/
 	void rotate_z(float angle);
 
+	/*
+	** Apply rotation to the given matrix using a quaternion 
+	*/
+	void rotate(const ga_quatf& __restrict q);
 
 	/*
 	** Multiply two matrices and store the result in a third.
